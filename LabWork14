@@ -1,1 +1,191 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def login():
+    username = entry_username.get()
+    password = entry_password.get()
+    remember = var_remember.get()
+    
+    if username == "admin" and password == "123":
+        messagebox.showinfo("Успех", "Авторизация прошла успешно!")
+        if remember:
+            print("Пароль сохранен")
+    else:
+        messagebox.showerror("Ошибка", "Неверный логин или пароль")
+
+root = tk.Tk()
+root.title("Форма авторизации")
+root.geometry("200x300")
+
+# Элементы формы
+label_username = tk.Label(root, text="Логин:")
+label_username.pack(pady=(20, 0))
+
+entry_username = tk.Entry(root)
+entry_username.pack(pady=5)
+
+label_password = tk.Label(root, text="Пароль:")
+label_password.pack(pady=(10, 0))
+
+entry_password = tk.Entry(root, show="*")
+entry_password.pack(pady=5)
+
+var_remember = tk.BooleanVar()
+check_remember = tk.Checkbutton(root, text="Запомнить пароль", variable=var_remember)
+check_remember.pack(pady=10)
+
+btn_login = tk.Button(root, text="Войти", command=login)
+btn_login.pack(pady=20)
+
+root.mainloop()
+
+import tkinter as tk
+from tkinter import ttk
+
+def register():
+    print("Регистрация:")
+    print(f"Логин: {entry_username.get()}")
+    print(f"Пароль: {entry_password.get()}")
+    print(f"О себе: {text_about.get('1.0', tk.END)}")
+    print(f"Пол: {'Мужской' if var_gender.get() == 1 else 'Женский'}")
+    print(f"Материя: {combobox_material.get()}")
+
+root = tk.Tk()
+root.title("Форма регистрации")
+root.geometry("400x500")
+root.configure(bg="#f0f0f0")
+
+# Стиль
+style = ttk.Style()
+style.configure('TLabel', background="#f0f0f0", font=('Arial', 10))
+style.configure('TButton', font=('Arial', 10))
+
+# Элементы формы
+label_username = ttk.Label(root, text="Логин:")
+label_username.pack(pady=(20, 0))
+
+entry_username = ttk.Entry(root)
+entry_username.pack(pady=5)
+
+label_password = ttk.Label(root, text="Пароль:")
+label_password.pack(pady=(10, 0))
+
+entry_password = ttk.Entry(root, show="*")
+entry_password.pack(pady=5)
+
+label_about = ttk.Label(root, text="О себе:")
+label_about.pack(pady=(10, 0))
+
+text_about = tk.Text(root, height=5, width=30)
+text_about.pack(pady=5)
+
+label_gender = ttk.Label(root, text="Пол:")
+label_gender.pack(pady=(10, 0))
+
+var_gender = tk.IntVar()
+frame_gender = tk.Frame(root, bg="#f0f0f0")
+frame_gender.pack()
+
+rb_male = ttk.Radiobutton(frame_gender, text="Мужской", variable=var_gender, value=1)
+rb_male.pack(side=tk.LEFT, padx=5)
+rb_female = ttk.Radiobutton(frame_gender, text="Женский", variable=var_gender, value=2)
+rb_female.pack(side=tk.LEFT, padx=5)
+
+label_material = ttk.Label(root, text="Материя:")
+label_material.pack(pady=(10, 0))
+
+materials = ["Физика", "Химия", "Биология", "Математика", "Информатика"]
+combobox_material = ttk.Combobox(root, values=materials)
+combobox_material.pack(pady=5)
+
+btn_register = ttk.Button(root, text="Зарегистрироваться", command=register)
+btn_register.pack(pady=20)
+
+root.mainloop()
+
+
+import tkinter as tk
+
+def generate_php():
+    php_label = f"<?php\n$data = array(\n"
+    php_label += f"    'text' => '{var_text.get()}',\n"
+    php_label += f"    'number' => {var_number.get()},\n"
+    php_label += f"    'option' => {var_option.get()}\n"
+    php_label += ");\n?>"
+    
+    text_output.delete('1.0', tk.END)
+    text_output.insert('1.0', php_label)
+
+root = tk.Tk()
+root.title("Генератор PHP")
+
+# Переменные
+var_text = tk.StringVar(value="Пример текста")
+var_number = tk.IntVar(value=42)
+var_option = tk.BooleanVar(value=True)
+
+# Виджеты
+frame = tk.Frame(root)
+frame.pack(padx=10, pady=10)
+
+label_text = tk.Label(frame, text="Текст:")
+label_text.grid(row=0, column=0, sticky="w", pady=5)
+entry_text = tk.Entry(frame, textvariable=var_text)
+entry_text.grid(row=0, column=1, pady=5)
+
+label_number = tk.Label(frame, text="Число:")
+label_number.grid(row=1, column=0, sticky="w", pady=5)
+spinbox_number = tk.Spinbox(frame, from_=0, to=100, textvariable=var_number)
+spinbox_number.grid(row=1, column=1, pady=5)
+
+label_option = tk.Label(frame, text="Опция:")
+label_option.grid(row=2, column=0, sticky="w", pady=5)
+check_option = tk.Checkbutton(frame, text="Включено", variable=var_option)
+check_option.grid(row=2, column=1, sticky="w", pady=5)
+
+btn_generate = tk.Button(root, text="Сгенерировать PHP", command=generate_php)
+btn_generate.pack(pady=10)
+
+text_output = tk.Text(root, height=10, width=40)
+text_output.pack(padx=10, pady=10)
+
+root.mainloop()
+
+import tkinter as tk
+
+def set_color(color):
+    root.config(bg=color)
+
+def set_size(size):
+    root.geometry(size)
+
+root = tk.Tk()
+root.title("Приложение с меню")
+root.geometry("500x500")
+
+# Создание меню
+menubar = tk.Menu(root)
+
+# Меню "Цвет"
+color_menu = tk.Menu(menubar, tearoff=0)
+color_menu.add_command(label="Красный", command=lambda: set_color("red"), accelerator="Ctrl+R")
+color_menu.add_command(label="Зеленый", command=lambda: set_color("green"), accelerator="Ctrl+G")
+color_menu.add_command(label="Синий", command=lambda: set_color("blue"), accelerator="Ctrl+B")
+menubar.add_cascade(label="Цвет", menu=color_menu)
+
+# Меню "Размер"
+size_menu = tk.Menu(menubar, tearoff=0)
+size_menu.add_command(label="500x500", command=lambda: set_size("500x500"), accelerator="Ctrl+1")
+size_menu.add_command(label="700x400", command=lambda: set_size("700x400"), accelerator="Ctrl+2")
+menubar.add_cascade(label="Размер", menu=size_menu)
+
+# Горячие клавиши
+root.bind("<Control-r>", lambda e: set_color("red"))
+root.bind("<Control-g>", lambda e: set_color("green"))
+root.bind("<Control-b>", lambda e: set_color("blue"))
+root.bind("<Control-1>", lambda e: set_size("500x500"))
+root.bind("<Control-2>", lambda e: set_size("700x400"))
+
+root.config(menu=menubar)
+root.mainloop()
 
