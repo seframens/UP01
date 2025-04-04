@@ -1,1 +1,117 @@
+import xml.etree.ElementTree as ET
 
+def xml_operations():
+    # Создание XML-файла
+    data = ET.Element('data')
+    items = ET.SubElement(data, 'items')
+    item1 = ET.SubElement(items, 'item')
+    item1.set('name', 'item1')
+    item1.text = 'Item 1 value'
+    item2 = ET.SubElement(items, 'item')
+    item2.set('name', 'item2')
+    item2.text = 'Item 2 value'
+    
+    tree = ET.ElementTree(data)
+    tree.write('data.xml')
+    print("XML-файл создан")
+    
+    # Чтение XML-файла
+    print("\nСодержимое XML-файла:")
+    tree = ET.parse('data.xml')
+    root = tree.getroot()
+    
+    for child in root:
+        for item in child:
+            print(f"Тег: {item.tag}, Атрибут name: {item.get('name')}, Текст: {item.text}")
+    
+    # Изменение XML-файла
+    for item in root.findall('./items/item'):
+        if item.get('name') == 'item1':
+            item.text = 'New Item 1 value'
+    
+    tree.write('data.xml')
+    print("\nXML-файл изменен")
+
+import wave
+import struct
+import math
+
+def wav_operations():
+    # Создание WAV-файла
+    sample_rate = 44100  # Частота дискретизации
+    duration = 3        # Длительность в секундах
+    frequency = 440     # Частота звука (A4 нота)
+    
+    with wave.open('sound.wav', 'w') as wav_file:
+        wav_file.setnchannels(1)         # Моно
+        wav_file.setsampwidth(2)        # 2 байта на сэмпл
+        wav_file.setframerate(sample_rate)
+        
+        for i in range(int(duration * sample_rate)):
+            value = int(32767 * math.sin(2 * math.pi * frequency * i / sample_rate))
+            data = struct.pack('<h', value)
+            wav_file.writeframes(data)
+    
+    print("\nWAV-файл создан")
+    
+    # Чтение WAV-файла
+    with wave.open('sound.wav', 'r') as wav_file:
+        print("\nПараметры WAV-файла:")
+        print(f"Количество каналов: {wav_file.getnchannels()}")
+        print(f"Ширина сэмпла (байт): {wav_file.getsampwidth()}")
+        print(f"Частота дискретизации: {wav_file.getframerate()}")
+        print(f"Количество кадров: {wav_file.getnframes()}")
+        print(f"Длительность (сек): {wav_file.getnframes() / wav_file.getframerate():.2f}")
+    
+    # Изменение WAV-файла (добавление тишины в конец)
+    with wave.open('sound.wav', 'a') as wav_file:
+        silence_duration = 1  # 1 секунда тишины
+        silence_frames = int(silence_duration * sample_rate)
+        silence_data = struct.pack('<h', 0) * silence_frames
+        wav_file.writeframes(silence_data)
+    
+    print("\nWAV-файл изменен (добавлена тишина в конец)")
+
+import sqlite3
+
+def sqlite_operations():
+    # Создание базы данных и таблицы
+    conn = sqlite3.connect('example.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users
+                      (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)''')
+    
+    # Добавление данных
+    cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", ('Alice', 25))
+    cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", ('Bob', 30))
+    conn.commit()
+    print("\nБаза данных SQLite создана, данные добавлены")
+    
+    # Чтение данных
+    print("\nСодержимое таблицы users:")
+    cursor.execute("SELECT * FROM users")
+    for row in cursor.fetchall():
+        print(f"ID: {row[0]}, Name: {row[1]}, Age: {row[2]}")
+    
+    # Изменение данных
+    cursor.execute("UPDATE users SET age = ? WHERE name = ?", (26, 'Alice'))
+    conn.commit()
+    
+    print("\nПосле изменения:")
+    cursor.execute("SELECT * FROM users")
+    for row in cursor.fetchall():
+        print(f"ID: {row[0]}, Name: {row[1]}, Age: {row[2]}")
+    
+    conn.close()
+
+# Выполнение всех функций
+if __name__ == "__main__":
+    print("5.1 Работа с XML-файлом:")
+    xml_operations()
+    
+    print("\n5.2 Работа с WAV-файлом:")
+    wav_operations()
+    
+    print("\n5.3 Работа с SQLite:")
+    sqlite_operations()
