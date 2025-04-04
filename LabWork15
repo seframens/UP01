@@ -1,1 +1,110 @@
+import tkinter as tk
+from tkinter import filedialog
 
+def save_file(event=None):
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                           filetypes=[("Текстовые файлы", "*.txt"),
+                                                     ("Все файлы", "*.*")])
+    if file_path:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(text_area.get('1.0', tk.END))
+        status_label.config(text=f"Файл сохранен: {file_path}")
+
+def close_app(event=None):
+    root.destroy()
+
+root = tk.Tk()
+root.title("Текстовый редактор")
+root.geometry("600x400")
+
+# Текстовое поле
+text_area = tk.Text(root, wrap=tk.WORD)
+text_area.pack(expand=True, fill=tk.BOTH, padx=5, pady=5)
+
+# Кнопка сохранения
+save_button = tk.Button(root, text="Сохранить", command=save_file)
+save_button.pack(pady=5)
+
+# Статус бар
+status_label = tk.Label(root, text="Готово", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+status_label.pack(fill=tk.X)
+
+# Привязка клавиш
+root.bind('<Control-s>', save_file)
+root.bind('<Escape>', close_app)
+
+root.mainloop()
+
+
+import tkinter as tk
+
+def on_entry_click(event):
+    widget = event.widget
+    if event.num == 1:  # Левая кнопка мыши
+        label_info.config(text=f"Активное поле: {widget.winfo_name()}")
+    elif event.num == 3:  # Правая кнопка мыши
+        print(f"Консоль: Активное поле - {widget.winfo_name()}")
+
+root = tk.Tk()
+root.title("Отслеживание полей ввода")
+
+# Метка для информации
+label_info = tk.Label(root, text="Нажмите на поле ввода", pady=10)
+label_info.pack()
+
+# Создаем несколько полей ввода
+entry1 = tk.Entry(root, name="Поле 1")
+entry1.pack(pady=5, padx=10, fill=tk.X)
+entry2 = tk.Entry(root, name="Поле 2")
+entry2.pack(pady=5, padx=10, fill=tk.X)
+entry3 = tk.Entry(root, name="Поле 3")
+entry3.pack(pady=5, padx=10, fill=tk.X)
+
+# Привязываем события ко всем Entry
+root.bind_class('Entry', '<Button-1>', on_entry_click)  # Левая кнопка
+root.bind_class('Entry', '<Button-3>', on_entry_click)  # Правая кнопка
+
+root.mainloop()
+
+
+import tkinter as tk
+
+def motion(event):
+    label_coords.config(text=f"Координаты мыши: X={event.x}, Y={event.y}")
+
+root = tk.Tk()
+root.title("Координаты мыши")
+root.geometry("400x300")
+
+# Метка для координат
+label_coords = tk.Label(root, text="Двигайте мышью в этом окне", pady=20)
+label_coords.pack()
+
+# Привязка движения мыши
+root.bind('<Motion>', motion)
+
+root.mainloop()
+
+
+import tkinter as tk
+
+def key_pressed(event):
+    if event.char:  # Игнорируем специальные клавиши без символа
+        label_keys.config(text=f"Последняя клавиша: '{event.char}'")
+
+root = tk.Tk()
+root.title("Отслеживание клавиш")
+root.geometry("400x200")
+
+# Метка для клавиш
+label_keys = tk.Label(root, text="Нажмите любую клавишу", pady=20, font=('Arial', 14))
+label_keys.pack()
+
+# Инструкция
+label_help = tk.Label(root, text="Кликните в этом окне и нажимайте клавиши", fg="gray")
+label_help.pack(pady=20)
+
+# Привязка клавиш
+root.bind('<Key>', key_pressed)
+
+root.mainloop()
