@@ -1,0 +1,109 @@
+import socket
+import threading
+from datetime import datetime
+import tkinter as tk
+from tkinter import messagebox
+
+# Настройки
+HOST = ''
+PORT = 50007
+clients = {}  # Хранение подключенных клиентов
+
+# Функция обработки клиента
+def handle_client(conn, addr):
+    login = conn.recv(1024).decode('utf-8')  # Получаем логин
+    clients[conn] = login
+    print(f"ПОДКЛЮЧИЛСЯ {login} ({addr})")
+
+    while True:
+        try:
+            data = conn.recv(1024)
+            if not data:
+                break
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(f"{timestamp} {login}: {data.decode('utf-8')}")
+        except:
+            break
+
+    print(f"{login} отключился.")
+    del clients[conn]
+    conn.close()
+
+# Функция запуска сервера
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((HOST, PORT))
+    server.listen(5)
+    print("Сервер запущен...")
+
+    while True:
+        conn, addr = server.accept()
+        threading.Thread(target=handle_client, args=(conn, addr)).start()
+
+# Функция работы клиента в консоли
+def start_client():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(('localhost', PORT))
+
+    login = input("Введите логин: ")
+    s.sendall(login.encode())  # Отправка логина
+
+    while True:
+        msg = input("Ваше сообщение: ")
+        if msg.lower() == "выход":
+            break
+        s.sendall(msg.encode())
+
+    s.close()
+
+# Функция отправки сообщений из GUI
+def send_message():
+    login = login_entry.get()
+    message = message_entry.get()
+    if not login or not message:
+        messagebox.showwarning("Ошибка", "Введите логин и сообщение!")
+        return
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(('localhost', PORT))
+    s.sendall(login.encode())  # Отправляем логин
+    s.sendall(message.encode())  # Отправляем сообщение
+    s.close()
+
+# Функция запуска GUI-клиента
+def start_gui_client():
+    global login_entry, message_entry
+
+    root = tk.Tk()
+    root.title("Чат-клиент")
+
+    tk.Label(root, text="Логин:").pack()
+    login_entry = tk.Entry(root)
+    login_entry.pack()
+
+    tk.Label(root, text="Сообщение:").pack()
+    message_entry = tk.Entry(root)
+    message_entry.pack()
+
+    send_button = tk.Button(root, text="Отправить", command=send_message)
+    send_button.pack()
+
+    root.mainloop()
+
+# Основное меню
+if __name__ == "__main__":
+    print("Выберите режим:")
+    print("1 - Запустить сервер")
+    print("2 - Запустить консольный клиент")
+    print("3 - Запустить графический клиент")
+
+    choice = input("Введите номер: ")
+
+    if choice == "1":
+        start_server()
+    elif choice == "2":
+        start_client()
+    elif choice == "3":
+        start_gui_client()
+    else:
+        print("Неверный ввод!")
